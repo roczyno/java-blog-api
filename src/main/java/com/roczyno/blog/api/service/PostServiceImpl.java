@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PostServiceImpl implements PostService{
 
@@ -16,17 +18,37 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto createPost(PostDto postDto) {
         //convert Dto to entity
+        Post post= maptoEntity(postDto);
+
+        Post newPost= postRepository.save(post);
+        //convert entity to Dto
+        return mapToDto(newPost);
+    }
+
+    @Override
+    public List<PostDto> getAllPosts() {
+        postRepository.findAll();
+        return null;
+    }
+
+    //converted entity to dto
+    private PostDto mapToDto(Post post){
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setDescription(post.getDescription());
+        postDto.setContent(post.getContent());
+
+        return postDto;
+    }
+
+    //convert Dto to entity
+    private Post maptoEntity(PostDto postDto){
         Post post= new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(postDto.getDescription());
-
-        Post newPost= postRepository.save(post);
-        //convert entity to Dto
-        PostDto postResponse = new PostDto();
-        postResponse.setTitle(newPost.getTitle());
-        postResponse.setContent(newPost.getContent());
-        postResponse.setDescription(newPost.getDescription());
-        return postResponse;
+        return post;
     }
+
 }
