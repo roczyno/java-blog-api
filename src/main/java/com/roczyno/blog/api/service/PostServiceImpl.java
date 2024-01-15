@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,12 @@ public class PostServiceImpl implements PostService{
         List<Post> posts= postRepository.findAll();
        return posts.stream().map(this::mapToDto).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public PostDto getPostById(Long id) {
+        Post post= postRepository.findById(id).orElseThrow();
+        return mapToDto(post);
     }
 
     //converted entity to dto
