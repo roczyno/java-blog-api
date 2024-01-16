@@ -1,6 +1,7 @@
 package com.roczyno.blog.api.controller;
 
 import com.roczyno.blog.api.payload.PostDto;
+import com.roczyno.blog.api.payload.PostResponse;
 import com.roczyno.blog.api.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public List<PostDto> getAllPosts(@RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                     @RequestParam(name = "pageSize", defaultValue = "2", required = false) int pageSize) {
+    public PostResponse getAllPosts(@RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                    @RequestParam(name = "pageSize", defaultValue = "2", required = false) int pageSize) {
         return postService.getAllPosts(pageNo,pageSize);
     }
 

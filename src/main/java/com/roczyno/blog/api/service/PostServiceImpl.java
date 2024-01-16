@@ -2,6 +2,7 @@ package com.roczyno.blog.api.service;
 
 import com.roczyno.blog.api.entity.Post;
 import com.roczyno.blog.api.payload.PostDto;
+import com.roczyno.blog.api.payload.PostResponse;
 import com.roczyno.blog.api.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,13 +32,22 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
         // create pagination
 
         Page<Post> posts= postRepository.findAll(PageRequest.of(pageNo,pageSize));
         //get content from page object
         List<Post> listOfPosts = posts.getContent();
-       return listOfPosts.stream().map(this::mapToDto).collect(Collectors.toList());
+       List<PostDto> content = listOfPosts.stream().map(this::mapToDto).collect(Collectors.toList());
+        PostResponse postResponse= new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
+
 
     }
 
