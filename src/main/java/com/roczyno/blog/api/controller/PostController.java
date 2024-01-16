@@ -15,34 +15,36 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-   private PostService postService;
+    private PostService postService;
 
     @PostMapping("/add")
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
+    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public List<PostDto> getAllPosts(){
-        return postService.getAllPosts();
+    public List<PostDto> getAllPosts(@RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                     @RequestParam(name = "pageSize", defaultValue = "2", required = false) int pageSize) {
+        return postService.getAllPosts(pageNo,pageSize);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id){
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable(name = "id") Long id) {
-        PostDto postResponse = postService.updatePost(postDto,id);
+        PostDto postResponse = postService.updatePost(postDto, id);
 
-        return new ResponseEntity<>(postResponse,HttpStatus.OK);
+        return new ResponseEntity<>(postResponse, HttpStatus.OK);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable(name="id") Long id){
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") Long id) {
         postService.deletePost(id);
-        return new ResponseEntity<>("Deleted successfully",HttpStatus.OK);
+        return new ResponseEntity<>("Deleted successfully", HttpStatus.OK);
 
     }
 }

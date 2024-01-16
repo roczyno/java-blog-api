@@ -4,9 +4,12 @@ import com.roczyno.blog.api.entity.Post;
 import com.roczyno.blog.api.payload.PostDto;
 import com.roczyno.blog.api.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,9 +31,13 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<Post> posts= postRepository.findAll();
-       return posts.stream().map(this::mapToDto).collect(Collectors.toList());
+    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+        // create pagination
+
+        Page<Post> posts= postRepository.findAll(PageRequest.of(pageNo,pageSize));
+        //get content from page object
+        List<Post> listOfPosts = posts.getContent();
+       return listOfPosts.stream().map(this::mapToDto).collect(Collectors.toList());
 
     }
 
