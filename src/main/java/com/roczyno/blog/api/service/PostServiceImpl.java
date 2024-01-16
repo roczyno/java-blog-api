@@ -20,7 +20,7 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto createPost(PostDto postDto) {
         //convert Dto to entity
-        Post post= maptoEntity(postDto);
+        Post post= mapToEntity(postDto);
 
         Post newPost= postRepository.save(post);
         //convert entity to Dto
@@ -40,6 +40,24 @@ public class PostServiceImpl implements PostService{
         return mapToDto(post);
     }
 
+    @Override
+    public PostDto updatePost(PostDto postDto, Long id) {
+        //get post by id from the database
+        Post post= postRepository.findById(id).orElseThrow();
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setDescription(postDto.getDescription());
+        Post updatedPost = postRepository.save(post);
+
+        return mapToDto(updatedPost);
+    }
+
+    @Override
+    public void deletePost(Long id) {
+        Post post= postRepository.findById(id).orElseThrow();
+        postRepository.delete(post);
+    }
+
     //converted entity to dto
     private PostDto mapToDto(Post post){
         PostDto postDto = new PostDto();
@@ -48,11 +66,13 @@ public class PostServiceImpl implements PostService{
         postDto.setDescription(post.getDescription());
         postDto.setContent(post.getContent());
 
+
+
         return postDto;
     }
 
     //convert Dto to entity
-    private Post maptoEntity(PostDto postDto){
+    private Post mapToEntity(PostDto postDto){
         Post post= new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
