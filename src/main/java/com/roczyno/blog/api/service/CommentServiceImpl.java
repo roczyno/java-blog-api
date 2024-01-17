@@ -2,10 +2,13 @@ package com.roczyno.blog.api.service;
 
 import com.roczyno.blog.api.entity.Comment;
 import com.roczyno.blog.api.entity.Post;
+import com.roczyno.blog.api.exception.BlogAPIException;
+import com.roczyno.blog.api.exception.ResourceNotFoundException;
 import com.roczyno.blog.api.payload.CommentDto;
 import com.roczyno.blog.api.repository.CommentRepository;
 import com.roczyno.blog.api.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +40,20 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> getCommentsByPostId(long postId) {
         List<Comment> comments= commentRepository.findByPostId(postId);
         return comments.stream().map(this::mapToDto).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public CommentDto getCommentById(long postId, long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(()->
+                new ResourceNotFoundException("Post","id",postId));
+        Comment comment= commentRepository.findById(commentId).orElseThrow(()->
+                new ResourceNotFoundException("Comment","id",commentId));
+
+        if(!comment.getPost().getId().equals(post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST,"Comment not found");
+        }
+        return mapToDto(comment);
 
     }
 
