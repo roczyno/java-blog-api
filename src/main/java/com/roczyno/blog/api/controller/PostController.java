@@ -3,6 +3,7 @@ package com.roczyno.blog.api.controller;
 import com.roczyno.blog.api.payload.PostDto;
 import com.roczyno.blog.api.payload.PostResponse;
 import com.roczyno.blog.api.service.PostService;
+import com.roczyno.blog.api.utils.AppConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,10 +25,10 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public PostResponse getAllPosts(@RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                    @RequestParam(name = "pageSize", defaultValue = "2", required = false) int pageSize,
-                                    @RequestParam(name="sortBy",defaultValue = "id",required = false) String sortBy,
-                                    @RequestParam(name = "sortDir",defaultValue = "asc",required = false) String sortDir){
+    public PostResponse getAllPosts(@RequestParam(name = "pageNo", defaultValue = AppConst.DEFAULT_PAGE_NO, required = false) int pageNo,
+                                    @RequestParam(name = "pageSize", defaultValue = AppConst.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+                                    @RequestParam(name="sortBy",defaultValue = AppConst.DEFAULT_SORT_BY,required = false) String sortBy,
+                                    @RequestParam(name = "sortDir",defaultValue =AppConst.DEFAULT_SORT_DIRECTION,required = false) String sortDir){
         return postService.getAllPosts(pageNo,pageSize,sortBy,sortDir);
     }
 
