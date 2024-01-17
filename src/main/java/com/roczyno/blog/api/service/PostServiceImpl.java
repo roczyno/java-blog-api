@@ -7,16 +7,14 @@ import com.roczyno.blog.api.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostRepository postRepository;
@@ -24,22 +22,25 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto createPost(PostDto postDto) {
         //convert Dto to entity
-        Post post= mapToEntity(postDto);
+        Post post = mapToEntity(postDto);
 
-        Post newPost= postRepository.save(post);
+        Post newPost = postRepository.save(post);
         //convert entity to Dto
         return mapToDto(newPost);
     }
 
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
         // create pagination
 
-        Page<Post> posts= postRepository.findAll(PageRequest.of(pageNo,pageSize));
+        Page<Post> posts = postRepository.findAll(PageRequest.of(pageNo, pageSize, sort));
         //get content from page object
         List<Post> listOfPosts = posts.getContent();
-       List<PostDto> content = listOfPosts.stream().map(this::mapToDto).collect(Collectors.toList());
-        PostResponse postResponse= new PostResponse();
+        List<PostDto> content = listOfPosts.stream().map(this::mapToDto).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());
         postResponse.setPageSize(posts.getSize());
@@ -53,14 +54,14 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public PostDto getPostById(Long id) {
-        Post post= postRepository.findById(id).orElseThrow();
+        Post post = postRepository.findById(id).orElseThrow();
         return mapToDto(post);
     }
 
     @Override
     public PostDto updatePost(PostDto postDto, Long id) {
         //get post by id from the database
-        Post post= postRepository.findById(id).orElseThrow();
+        Post post = postRepository.findById(id).orElseThrow();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(postDto.getDescription());
@@ -71,12 +72,12 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void deletePost(Long id) {
-        Post post= postRepository.findById(id).orElseThrow();
+        Post post = postRepository.findById(id).orElseThrow();
         postRepository.delete(post);
     }
 
     //converted entity to dto
-    private PostDto mapToDto(Post post){
+    private PostDto mapToDto(Post post) {
         PostDto postDto = new PostDto();
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
@@ -84,13 +85,12 @@ public class PostServiceImpl implements PostService{
         postDto.setContent(post.getContent());
 
 
-
         return postDto;
     }
 
     //convert Dto to entity
-    private Post mapToEntity(PostDto postDto){
-        Post post= new Post();
+    private Post mapToEntity(PostDto postDto) {
+        Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setDescription(postDto.getDescription());
