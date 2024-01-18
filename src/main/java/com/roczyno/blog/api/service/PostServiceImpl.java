@@ -4,6 +4,7 @@ import com.roczyno.blog.api.entity.Post;
 import com.roczyno.blog.api.payload.PostDto;
 import com.roczyno.blog.api.payload.PostResponse;
 import com.roczyno.blog.api.repository.PostRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 public class PostServiceImpl implements PostService {
 
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private PostRepository postRepository;
 
@@ -78,23 +81,12 @@ public class PostServiceImpl implements PostService {
 
     //converted entity to dto
     private PostDto mapToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setDescription(post.getDescription());
-        postDto.setContent(post.getContent());
-
-
-        return postDto;
+        return modelMapper.map(post,PostDto.class);
     }
 
     //convert Dto to entity
     private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setDescription(postDto.getDescription());
-        return post;
+       return modelMapper.map(postDto,Post.class);
     }
 
 }
