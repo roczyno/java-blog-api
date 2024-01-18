@@ -3,9 +3,12 @@ package com.roczyno.blog.api.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class BlogAPIException extends RuntimeException{
+
     @Getter
     private HttpStatus status;
+
     private String message;
 
     public BlogAPIException(HttpStatus status, String message) {
